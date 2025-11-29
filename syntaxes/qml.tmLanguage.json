@@ -1,0 +1,375 @@
+{
+  "name": "QML",
+  "scopeName": "source.qml",
+  "fileTypes": ["qml", "qmltypes"],
+  "patterns": [
+    {
+      "include": "#qml-main"
+    }
+  ],
+  "repository": {
+    "qml-main": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#shebang"
+        },
+        {
+          "include": "#import"
+        },
+        {
+          "include": "#qml-keywords"
+        },
+        {
+          "include": "#signal"
+        },
+        {
+          "include": "#property"
+        },
+        {
+          "include": "#qml-types"
+        },
+        {
+          "include": "#qml-object-instantiation"
+        },
+        {
+          "include": "#qml-object-literal"
+        },
+        {
+          "include": "#qml-function-call"
+        },
+        {
+          "include": "#qml-property-access"
+        },
+        {
+          "include": "source.js#string"
+        },
+        {
+          "include": "source.js#numeric-literal"
+        },
+        {
+          "include": "source.js#regex"
+        },
+        {
+          "include": "source.js#literal-keyword"
+        },
+        {
+          "include": "source.js#function-declaration"
+        },
+        {
+          "include": "source.js#support"
+        },
+        {
+          "include": "source.js#operators"
+        },
+        {
+          "include": "source.js#punctuation"
+        }
+      ]
+    },
+    "qml-object-instantiation": {
+      "patterns": [
+        {
+          "comment": "Built-in Qt types",
+          "match": "\\b(State|PropertyChanges|StateGroup|ParentChange|StateChangeScript|AnchorChanges|PropertyAnimation|NumberAnimation|ColorAnimation|SequentialAnimation|ParallelAnimation|PauseAnimation|PropertyAction|ParentAction|ScriptAction|Transition|SpringFollow|EaseFollow|Behavior|Binding|ListModel|ListElement|VisualItemModel|XmlListModel|XmlRole|DateTimeFormatter|NumberFormatter|Script|Connections|Component|Timer|QtObject|Item|Rectangle|Image|BorderImage|Text|TextInput|TextEdit|MouseArea|FocusScope|Flickable|Flipable|WebView|Loader|Repeater|SystemPalette|GraphicsObjectContainer|LayoutItem|ListView|GridView|PathView|Path|PathLine|PathQuad|PathCubic|PathAttribute|PathPercent|Column|Row|Grid|Scale|Rotation|Blur|Colorize|DropShadow|Opacity|Particles|ParticleMotionLinear|ParticleMotionGravity|ParticleMotionWander|Gradient|GradientStop|MouseRegion)\\b",
+          "name": "support.class.qml"
+        },
+        {
+          "comment": "Qualified component: Alias.Component (import alias qualifier)",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\.([A-Z][a-zA-Z0-9_]*)\\b(?=\\s*\\{)",
+          "captures": {
+            "1": {
+              "name": "entity.name.decorator.qml"
+            },
+            "2": {
+              "name": "entity.name.type.class.qml"
+            }
+          }
+        },
+        {
+          "comment": "Property groups: anchors, font, etc (lowercase start)",
+          "match": "\\b([a-z][a-zA-Z0-9_]*)\\b(?=\\s*\\{)",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.qml"
+            }
+          }
+        },
+        {
+          "comment": "Custom/standard components (uppercase start)",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\b(?=\\s*\\{)",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.class.qml"
+            }
+          }
+        }
+      ]
+    },
+    "qml-object-literal": {
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.js"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.js"
+        }
+      },
+      "patterns": [
+        {
+          "comment": "Signal handlers: onXxx:",
+          "match": "\\b(on[A-Z][a-zA-Z0-9_]*)\\s*(?=:)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.signal.qml"
+            }
+          }
+        },
+        {
+          "comment": "id keyword",
+          "match": "\\b(id)\\s*(?=:)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.qml"
+            }
+          }
+        },
+        {
+          "comment": "Property group bindings: anchors.top, font.bold",
+          "match": "\\b([a-z][a-zA-Z0-9_]*)(\\.([a-zA-Z_$][\\w$]*))\\s*(?=:)",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.qml"
+            },
+            "2": {
+              "name": "punctuation.accessor.qml"
+            },
+            "3": {
+              "name": "variable.other.property.qml"
+            }
+          }
+        },
+        {
+          "comment": "Property bindings",
+          "match": "([a-zA-Z_$][\\w$]*)\\s*(?=:)",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.qml"
+            }
+          }
+        },
+        {
+          "include": "#qml-main"
+        }
+      ]
+    },
+    "qml-function-call": {
+      "patterns": [
+        {
+          "comment": "Method calls: obj.method()",
+          "match": "\\.([a-zA-Z_$][\\w$]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.qml"
+            }
+          }
+        },
+        {
+          "comment": "Standalone function calls: func()",
+          "match": "\\b([a-zA-Z_$][\\w$]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.qml"
+            }
+          }
+        }
+      ]
+    },
+    "qml-property-access": {
+      "patterns": [
+        {
+          "comment": "Qualified type access: Type.Property",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\.([a-zA-Z_$][\\w$]*)",
+          "captures": {
+            "1": {
+              "name": "entity.name.namespace.qml"
+            },
+            "2": {
+              "name": "variable.other.property.qml"
+            }
+          }
+        },
+        {
+          "comment": "Property access (not function calls or bindings): .property",
+          "match": "\\.([a-zA-Z_$][\\w$]*)(?!\\s*[(:])",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.qml"
+            }
+          }
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "comment": "Block comments (/* ... */)",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.qml"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.qml"
+            }
+          },
+          "name": "comment.block.qml"
+        },
+        {
+          "comment": "Line comments (// ...)",
+          "match": "//.*$",
+          "name": "comment.line.double-slash.qml",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.qml"
+            }
+          }
+        }
+      ]
+    },
+    "shebang": {
+      "patterns": [
+        {
+          "match": "^#!.*$",
+          "name": "comment.line.shebang.qml"
+        }
+      ]
+    },
+    "import": {
+      "patterns": [
+        {
+          "comment": "Full import statement with optional version and alias",
+          "match": "\\b(import)\\s+(\"[^\"]+\"|'[^']+'|([\\w.]+))(?:\\s+(\\d+\\.\\d+))?(?:\\s+(as)\\s+([A-Z][a-zA-Z0-9_]*))?",
+          "captures": {
+            "1": {
+              "name": "keyword.control.import.qml"
+            },
+            "2": {
+              "name": "entity.name.namespace.qml"
+            },
+            "3": {
+              "name": "entity.name.namespace.qml"
+            },
+            "4": {
+              "name": "constant.numeric.version.qml"
+            },
+            "5": {
+              "name": "keyword.control.as.qml"
+            },
+            "6": {
+              "name": "entity.name.decorator.qml"
+            }
+          }
+        }
+      ]
+    },
+    "qml-keywords": {
+      "patterns": [
+        {
+          "match": "\\b(pragma|readonly|required|default)\\b",
+          "name": "storage.modifier.qml"
+        }
+      ]
+    },
+    "qml-types": {
+      "patterns": [
+        {
+          "match": "\\b(string|int|bool|date|color|url|real|double|var|variant)\\b",
+          "name": "storage.type.qml"
+        }
+      ]
+    },
+
+    "signal": {
+      "patterns": [
+        {
+          "begin": "\\b(signal)\\s+([a-zA-Z_$][\\w$]*)",
+          "end": "(?=[;\\n]|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.type.qml"
+            },
+            "2": {
+              "name": "entity.name.function.qml"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\(",
+              "end": "\\)",
+              "patterns": [
+                {
+                  "match": "\\b(string|int|bool|date|color|url|real|double|var|variant)\\b",
+                  "name": "storage.type.qml"
+                },
+                {
+                  "match": "[a-zA-Z_$][\\w$]*",
+                  "name": "variable.parameter.qml"
+                },
+                {
+                  "include": "source.js#comments"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "property": {
+      "patterns": [
+        {
+          "begin": "\\b(readonly|required|default)?\\s*(property)\\s+",
+          "end": "(?=:)|(?=[;\\n]|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.modifier.qml"
+            },
+            "2": {
+              "name": "storage.type.qml"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\b(alias)\\b",
+              "name": "storage.type.qml"
+            },
+            {
+              "match": "\\b(string|int|bool|date|color|url|real|double|var|variant)\\b",
+              "name": "storage.type.qml"
+            },
+            {
+              "match": "\\b([A-Z][a-zA-Z0-9_]*)\\b",
+              "name": "support.class.qml"
+            },
+            {
+              "match": "[a-zA-Z_$][\\w$]*",
+              "name": "variable.other.declaration.qml"
+            },
+            {
+              "include": "source.js#comments"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

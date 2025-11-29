@@ -1,0 +1,33 @@
+<svg width="250" height="80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Editor line background -->
+  <rect x="10" y="6" width="60" height="22" fill="#252526" rx="2"/>
+  
+  <!-- Typed text "QML" -->
+  <text x="15" y="22" font-family="'Consolas', 'Courier New', monospace" font-size="16" fill="#d4d4d4">QML</text>
+  
+  <!-- Cursor -->
+  <rect x="42" y="8" width="2" height="18" fill="#ffffff">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Completion popup -->
+  <g>
+    <!-- Popup background -->
+    <rect x="42" y="32" width="180" height="32" fill="#252526" stroke="#454545" stroke-width="1" rx="3"/>
+    
+    <!-- Selected item background -->
+    <rect x="44" y="34" width="176" height="28" fill="#094771" rx="2"/>
+    
+    <!-- Icon (symbol-class) -->
+    <circle cx="61" cy="48" r="6" fill="#ee9d28"/>
+    <text x="58" y="52" font-family="'Consolas', monospace" font-size="10" font-weight="bold" fill="#1e1e1e">C</text>
+    
+    <!-- Completion text -->
+    <text x="74" y="52" font-family="'Consolas', 'Courier New', monospace" font-size="14" fill="#d4d4d4">
+      <tspan fill="#4ec9b0" font-weight="bold">QML</tspan><tspan>Sense</tspan>
+    </text>
+    
+    <!-- Type hint -->
+    <text x="169" y="52" font-family="'Consolas', 'Courier New', monospace" font-size="12" fill="#858585">class</text>
+  </g>
+</svg>

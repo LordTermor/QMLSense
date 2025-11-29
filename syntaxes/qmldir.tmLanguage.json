@@ -1,0 +1,251 @@
+{
+  "name": "QML Directory (qmldir)",
+  "scopeName": "source.qmldir",
+  "fileTypes": ["qmldir"],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#module-declaration"
+    },
+    {
+      "include": "#singleton-declaration"
+    },
+    {
+      "include": "#internal-declaration"
+    },
+    {
+      "include": "#typeinfo-declaration"
+    },
+    {
+      "include": "#plugin-declaration"
+    },
+    {
+      "include": "#classname-declaration"
+    },
+    {
+      "include": "#depends-declaration"
+    },
+    {
+      "include": "#import-declaration"
+    },
+    {
+      "include": "#optional-declaration"
+    },
+    {
+      "include": "#default-declaration"
+    },
+    {
+      "include": "#designersupported-declaration"
+    },
+    {
+      "include": "#prefer-declaration"
+    },
+    {
+      "include": "#linktarget-declaration"
+    },
+    {
+      "include": "#component-declaration"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "match": "#.*$",
+          "name": "comment.line.number-sign.qmldir"
+        }
+      ]
+    },
+    "module-declaration": {
+      "comment": "module <ModuleIdentifier>",
+      "match": "^\\s*(module)\\s+([\\w.]+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.module.qmldir"
+        },
+        "2": {
+          "name": "entity.name.namespace.module.qmldir"
+        }
+      }
+    },
+    "singleton-declaration": {
+      "comment": "singleton <TypeName> <Version> <File>",
+      "match": "^\\s*(singleton)\\s+([A-Z]\\w*)\\s+(\\d+\\.\\d+)\\s+([\\w./\\-]+\\.(?:ui\\.)?(?:qml|js))\\s*$",
+      "captures": {
+        "1": {
+          "name": "storage.modifier.singleton.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.singleton.qmldir"
+        },
+        "3": {
+          "name": "constant.numeric.version.qmldir"
+        },
+        "4": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    },
+    "internal-declaration": {
+      "comment": "internal <TypeName> <File>",
+      "match": "^\\s*(internal)\\s+([A-Z]\\w*)\\s+([\\w./\\-]+\\.(?:ui\\.)?(?:qml|js))\\s*$",
+      "captures": {
+        "1": {
+          "name": "storage.modifier.internal.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.internal.qmldir"
+        },
+        "3": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    },
+    "typeinfo-declaration": {
+      "comment": "typeinfo <File>",
+      "match": "^\\s*(typeinfo)\\s+([\\w./\\-]+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.typeinfo.qmldir"
+        },
+        "2": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    },
+    "plugin-declaration": {
+      "comment": "plugin <Name> [<Path>]",
+      "match": "^\\s*(plugin)\\s+([\\w]+)(?:\\s+([\\w./\\-]+))?\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.plugin.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.plugin.qmldir"
+        },
+        "3": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    },
+    "classname-declaration": {
+      "comment": "classname <C++ Class>",
+      "match": "^\\s*(classname)\\s+(\\w+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.classname.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.class.qmldir"
+        }
+      }
+    },
+    "depends-declaration": {
+      "comment": "depends <ModuleIdentifier> <Version>",
+      "match": "^\\s*(depends)\\s+([\\w.]+)\\s+(\\d+\\.\\d+|auto)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.depends.qmldir"
+        },
+        "2": {
+          "name": "entity.name.namespace.module.qmldir"
+        },
+        "3": {
+          "name": "constant.numeric.version.qmldir"
+        }
+      }
+    },
+    "import-declaration": {
+      "comment": "import <ModuleIdentifier> [<Version>]",
+      "match": "^\\s*(import)\\s+([\\w.]+)(?:\\s+(\\d+\\.\\d+|auto))?\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.qmldir"
+        },
+        "2": {
+          "name": "entity.name.namespace.module.qmldir"
+        },
+        "3": {
+          "name": "constant.numeric.version.qmldir"
+        }
+      }
+    },
+    "optional-declaration": {
+      "comment": "optional plugin <Name>",
+      "match": "^\\s*(optional)\\s+(plugin)\\s+([\\w]+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "storage.modifier.optional.qmldir"
+        },
+        "2": {
+          "name": "keyword.control.plugin.qmldir"
+        },
+        "3": {
+          "name": "entity.name.type.plugin.qmldir"
+        }
+      }
+    },
+    "default-declaration": {
+      "comment": "default <TypeName>",
+      "match": "^\\s*(default)\\s+([A-Z]\\w*)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.default.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.qmldir"
+        }
+      }
+    },
+    "designersupported-declaration": {
+      "comment": "designersupported",
+      "match": "^\\s*(designersupported)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.designersupported.qmldir"
+        }
+      }
+    },
+    "prefer-declaration": {
+      "comment": "prefer <Path>",
+      "match": "^\\s*(prefer)\\s+([\\w./\\-:]+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.prefer.qmldir"
+        },
+        "2": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    },
+    "linktarget-declaration": {
+      "comment": "linktarget <Name>",
+      "match": "^\\s*(linktarget)\\s+(\\w+)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.linktarget.qmldir"
+        },
+        "2": {
+          "name": "entity.name.type.qmldir"
+        }
+      }
+    },
+    "component-declaration": {
+      "comment": "<TypeName> [<Version>] <File> - Component declaration without keyword",
+      "match": "^\\s*([A-Z]\\w*)\\s+(?:(\\d+\\.\\d+)\\s+)?([\\w./\\-]+\\.(?:ui\\.)?(?:qml|js))\\s*$",
+      "captures": {
+        "1": {
+          "name": "entity.name.type.component.qmldir"
+        },
+        "2": {
+          "name": "constant.numeric.version.qmldir"
+        },
+        "3": {
+          "name": "string.unquoted.filepath.qmldir"
+        }
+      }
+    }
+  }
+}

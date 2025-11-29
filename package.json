@@ -1,0 +1,228 @@
+{
+  "name": "qmlsense",
+  "displayName": "QMLSense",
+  "description": "QML language support with tree-sitter",
+  "version": "0.2.0-dev.202511291431",
+  "author": "Artem Grinev",
+  "publisher": "agrinev",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#00000000",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:qml",
+    "onLanguage:qmldir"
+  ],
+  "repository": {
+    "url": "https://github.com/LordTermor/QMLSense",
+    "type": "git"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "qml",
+        "extensions": [
+          ".qml",
+          ".qmlproject"
+        ],
+        "configuration": "./qml.configuration.json"
+      },
+      {
+        "id": "qmldir",
+        "filenames": [
+          "qmldir"
+        ],
+        "aliases": [
+          "QML Module Definition"
+        ],
+        "configuration": "./qml.configuration.json",
+        "icon": {
+          "light": "./images/qmldir-file-light.svg",
+          "dark": "./images/qmldir-file-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "qml",
+        "scopeName": "source.qml",
+        "path": "./syntaxes/qml.tmLanguage.json"
+      },
+      {
+        "language": "qmldir",
+        "scopeName": "source.qmldir",
+        "path": "./syntaxes/qmldir.tmLanguage.json"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "qml",
+        "scopes": {
+          "class": [
+            "entity.name.type.qml",
+            "support.class.qml"
+          ],
+          "property": [
+            "variable.other.property.qml"
+          ],
+          "function": [
+            "entity.name.function.qml"
+          ],
+          "event": [
+            "entity.name.function.signal.qml"
+          ],
+          "variable": [
+            "variable.other.qml",
+            "variable.other.readwrite.qml"
+          ],
+          "keyword": [
+            "keyword.control.qml",
+            "keyword.other.qml",
+            "storage.type.qml"
+          ],
+          "type": [
+            "storage.type.primitive.qml",
+            "entity.name.type.qml"
+          ],
+          "namespace": [
+            "entity.name.namespace.qml",
+            "support.type.module.qml"
+          ],
+          "decorator": [
+            "entity.name.decorator.qml",
+            "meta.decorator.qml"
+          ]
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "qml.indexer.reindexWorkspace",
+        "title": "QML Indexer: Reindex Workspace",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.dumpIndex",
+        "title": "QML Indexer: Dump Index to Output",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.showDependencyGraph",
+        "title": "QML Indexer: Show Dependency Graph",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.showFileInfo",
+        "title": "QML Indexer: Show Current File Info",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.clearCache",
+        "title": "QML Indexer: Clear Index Cache",
+        "category": "QML"
+      },
+      {
+        "command": "qml.ast.showAtCursor",
+        "title": "QML AST: Show Tree at Cursor",
+        "category": "QML"
+      },
+      {
+        "command": "qml.ast.showFullTree",
+        "title": "QML AST: Show Full Tree",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.showModuleIndex",
+        "title": "QML Indexer: Show Module Index",
+        "category": "QML"
+      },
+      {
+        "command": "qml.indexer.resolveComponent",
+        "title": "QML Indexer: Resolve Component",
+        "category": "QML"
+      },
+      {
+        "command": "qml.semanticTokens.inspectAtCursor",
+        "title": "QML Tokens: Inspect at Cursor",
+        "category": "QML"
+      },
+      {
+        "command": "qml.semanticTokens.debugClassification",
+        "title": "QML Tokens: Debug Classification",
+        "category": "QML"
+      },
+      {
+        "command": "qml.selection.debugExpansion",
+        "title": "QML Selection: Debug Expansion",
+        "category": "QML"
+      }
+    ],
+    "configuration": {
+      "title": "QML",
+      "properties": {
+        "qml.semanticHighlighting.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable semantic syntax highlighting using tree-sitter (recommended). Disable to use only TextMate grammar."
+        },
+        "qml.indexing.enableOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically index workspace QML files on startup for cross-file navigation."
+        },
+        "qml.indexing.batchSize": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 1000,
+          "description": "Number of files to process in parallel batches. Higher values = faster indexing but more memory usage."
+        },
+        "qml.indexing.ignoreFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/build/**",
+            "**/dist/**",
+            "**/.git/**",
+            "**/out/**"
+          ],
+          "description": "Glob patterns for folders to ignore during QML file indexing."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run version:dev && npm run compile",
+    "compile": "tsc -p ./ && npm run postcompile",
+    "postcompile": "npm run copy:data && npm run copy:libs && npm run copy:wasm",
+    "copy:data": "mkdir -p out/indexer/data && cp src/indexer/data/qt-builtins.json out/indexer/data/",
+    "copy:libs": "mkdir -p lib && cp -r node_modules/web-tree-sitter lib/ && cp -r node_modules/@vscode/sqlite3 lib/sqlite3",
+    "copy:wasm": "mkdir -p lib && cp node_modules/tree-sitter-qmljs/tree-sitter-qmljs.wasm lib/",
+    "build:wasm": "cd node_modules/tree-sitter-qmljs && npx tree-sitter build-wasm",
+    "version:dev": "node scripts/version-dev.js",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.63.0",
+    "tree-sitter-cli": "^0.20.8",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@vscode/sqlite3": "^5.1.9-vscode",
+    "web-tree-sitter": "^0.20.8",
+    "tree-sitter-qmljs": "^0.3.0"
+  }
+}

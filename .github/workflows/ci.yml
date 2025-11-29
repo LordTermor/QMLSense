@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: bun --bun install
+
+      - name: Build WASM
+        run: bun --bun run build:wasm
+
+      - name: Rebuild native modules for Linux
+        run: |
+          cd node_modules/@vscode/sqlite3
+          bunx --bun node-gyp rebuild
+          cd ../..
+
+      - name: Compile TypeScript
+        run: bun --bun run compile
+
+      - name: Check for TypeScript errors
+        run: bunx --bun tsc --noEmit
+
+      - name: Package extension (validation)
+        run: bunx --bun @vscode/vsce package --pre-release --allow-missing-repository
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vscode-qml-extension
+          path: '*.vsix'
+          retention-days: 7

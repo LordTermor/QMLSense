@@ -1,0 +1,32 @@
+{
+  // QML Extension Settings Examples
+  
+  // Enable/disable semantic highlighting (tree-sitter based)
+  // When enabled: Rich highlighting with import qualifiers, type detection
+  // When disabled: Falls back to TextMate grammar only
+  "qml.semanticHighlighting.enabled": true,
+  
+  // Auto-index workspace on startup for cross-file navigation
+  "qml.indexing.enableOnStartup": true,
+
+  // Parallel batch size for indexing (default: 100)
+  // Higher = faster indexing but more memory usage
+  // For 18k+ files: try 200-500 for best performance
+  "qml.indexing.batchSize": 100,
+
+  // Optional: Configure editor semantic highlighting behavior
+  // Ensures semantic tokens take priority over TextMate grammar
+  "editor.semanticHighlighting.enabled": true,
+  
+  // Optional: Fine-tune which semantic tokens to show
+  "editor.semanticTokenColorCustomizations": {
+    "[Default Dark+]": {
+      "enabled": true,
+      "rules": {
+        "namespace": "#4EC9B0",
+        "variable.declaration": "#9CDCFE",
+        "class.defaultLibrary": "#4EC9B0"
+      }
+    }
+  }
+}

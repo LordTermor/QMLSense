@@ -1,0 +1,82 @@
+{
+  "QtQuick": {
+    "version": "2.15",
+    "components": [
+      { "name": "Item", "isSingleton": false },
+      { "name": "Rectangle", "isSingleton": false },
+      { "name": "Text", "isSingleton": false },
+      { "name": "Image", "isSingleton": false },
+      { "name": "BorderImage", "isSingleton": false },
+      { "name": "AnimatedImage", "isSingleton": false },
+      { "name": "Row", "isSingleton": false },
+      { "name": "Column", "isSingleton": false },
+      { "name": "Grid", "isSingleton": false },
+      { "name": "Flow", "isSingleton": false },
+      { "name": "Repeater", "isSingleton": false },
+      { "name": "ListView", "isSingleton": false },
+      { "name": "GridView", "isSingleton": false },
+      { "name": "PathView", "isSingleton": false },
+      { "name": "Loader", "isSingleton": false },
+      { "name": "Flickable", "isSingleton": false },
+      { "name": "MouseArea", "isSingleton": false },
+      { "name": "FocusScope", "isSingleton": false },
+      { "name": "TextInput", "isSingleton": false },
+      { "name": "TextEdit", "isSingleton": false },
+      { "name": "Canvas", "isSingleton": false },
+      { "name": "ShaderEffect", "isSingleton": false }
+    ]
+  },
+  "QtQuick.Controls": {
+    "version": "2.15",
+    "components": [
+      { "name": "ApplicationWindow", "isSingleton": false },
+      { "name": "Button", "isSingleton": false },
+      { "name": "CheckBox", "isSingleton": false },
+      { "name": "RadioButton", "isSingleton": false },
+      { "name": "Switch", "isSingleton": false },
+      { "name": "TextField", "isSingleton": false },
+      { "name": "TextArea", "isSingleton": false },
+      { "name": "ComboBox", "isSingleton": false },
+      { "name": "Slider", "isSingleton": false },
+      { "name": "ProgressBar", "isSingleton": false },
+      { "name": "Label", "isSingleton": false },
+      { "name": "ScrollView", "isSingleton": false },
+      { "name": "Popup", "isSingleton": false },
+      { "name": "Dialog", "isSingleton": false },
+      { "name": "Menu", "isSingleton": false },
+      { "name": "MenuBar", "isSingleton": false },
+      { "name": "ToolBar", "isSingleton": false },
+      { "name": "TabBar", "isSingleton": false },
+      { "name": "SpinBox", "isSingleton": false },
+      { "name": "RangeSlider", "isSingleton": false }
+    ]
+  },
+  "QtQuick.Layouts": {
+    "version": "2.15",
+    "components": [
+      { "name": "RowLayout", "isSingleton": false },
+      { "name": "ColumnLayout", "isSingleton": false },
+      { "name": "GridLayout", "isSingleton": false },
+      { "name": "StackLayout", "isSingleton": false },
+      { "name": "Layout", "isSingleton": false }
+    ]
+  },
+  "QtQuick.Window": {
+    "version": "2.15",
+    "components": [
+      { "name": "Window", "isSingleton": false },
+      { "name": "Screen", "isSingleton": true }
+    ]
+  },
+  "QtQml": {
+    "version": "2.15",
+    "components": [
+      { "name": "QtObject", "isSingleton": false },
+      { "name": "Component", "isSingleton": false },
+      { "name": "Connections", "isSingleton": false },
+      { "name": "Timer", "isSingleton": false },
+      { "name": "Binding", "isSingleton": false },
+      { "name": "Qt", "isSingleton": true }
+    ]
+  }
+}

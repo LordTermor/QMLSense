@@ -1,0 +1,4 @@
+module MyComponents
+CustomButton 1.0 CustomButton.qml
+CustomText 1.0 CustomText.qml
+singleton Theme 1.0 Theme.qml

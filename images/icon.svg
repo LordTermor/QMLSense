@@ -1,0 +1,7 @@
+<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" fill="#1e1e1e" rx="8"/>
+  
+  <!-- Large QML text centered -->
+  <text x="64" y="78" font-family="'Consolas', 'Courier New', monospace" font-size="48" font-weight="bold" fill="#4ec9b0" text-anchor="middle">QML</text>
+</svg>
