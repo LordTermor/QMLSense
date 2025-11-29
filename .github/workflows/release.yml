@@ -3,66 +3,64 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'  # Trigger on version tags like v0.2.0, v1.0.0
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Bun (for WASM build on host)
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: bun --bun install
-
       - name: Build WASM
-        run: bun --bun run build:wasm
-
-      - name: Rebuild native modules for Linux
         run: |
-          cd node_modules/@vscode/sqlite3
-          bunx --bun node-gyp rebuild
-          cd ../..
+          bun --bun install
+          bun --bun run build:wasm
 
-      - name: Compile TypeScript
-        run: bun --bun run compile
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Package extension
-        run: bunx --bun @vscode/vsce package --pre-release --allow-missing-repository
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: vscode-qml-builder:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Build extension in Docker
+        run: |
+          docker run --rm -v "$PWD":/app -w /app vscode-qml-builder:latest bash -c '
+            set -euo pipefail
+            bun --bun install
+            cd node_modules/@vscode/sqlite3 && bunx --bun node-gyp rebuild && cd /app
+            bun --bun run compile
+            bunx --bun @vscode/vsce package --pre-release --allow-missing-repository
+          '
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: '*.vsix'
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, '-') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          make_latest: ${{ !contains(github.ref, '-') }}
 
-      - name: Publish to VS Code Marketplace
-        if: "!contains(github.ref, '-')"  # Only publish stable releases, not pre-releases
-        run: bunx --bun @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
-      - name: Publish to Open VSX
-        if: "!contains(github.ref, '-')"
-        run: bunx --bun ovsx publish -p ${{ secrets.OVSX_PAT }}
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      # - name: Publish to VS Code Marketplace
+      #   if: ${{ !contains(github.ref, '-') }}
+      #   run: bunx --bun ovsx publish -p ${{ secrets.OVSX_PAT }}
