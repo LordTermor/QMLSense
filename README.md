@@ -3,7 +3,7 @@
 <p align="center"><b>QML language support for VS Code</b></p>
 
 <p align="center">
-  <a href="https://https://github.com/LordTermor/QMLSense/releases/latest">
+  <a href="https://github.com/LordTermor/QMLSense/releases/latest">
     <img src="https://img.shields.io/github/v/release/LordTermor/QMLSense" alt="GitHub Release">
   </a>
   <a href="LICENSE">
