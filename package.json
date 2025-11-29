@@ -2,7 +2,7 @@
   "name": "qmlsense",
   "displayName": "QMLSense",
   "description": "QML language support with tree-sitter",
-  "version": "0.2.0-dev.202511291431",
+  "version": "0.2.1-dev",
   "author": "Artem Grinev",
   "publisher": "agrinev",
   "icon": "images/icon.png",
