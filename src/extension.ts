@@ -10,6 +10,7 @@ import { QmlCompletionProvider } from './providers/completion/completionProvider
 import { QmlHoverProvider } from './providers/hover/hoverProvider';
 import { QmldirDefinitionProvider } from './providers/qmldir/qmldirDefinitionProvider';
 import { QmldirReferencesProvider } from './providers/qmldir/qmldirReferencesProvider';
+import { QmlSyntaxDiagnosticsProvider } from './providers/diagnostics/syntaxDiagnosticsProvider';
 import { getIndexer, IndexerService } from './indexer/indexerService';
 import { ModuleComponent } from './indexer/moduleTypes';
 import { registerIndexerDebugCommands } from './indexer/debugCommands';
@@ -82,6 +83,9 @@ export async function activate(context: vscode.ExtensionContext) {
     } else {
         console.log('QML semantic highlighting disabled - using TextMate grammar only');
     }
+
+    const syntaxDiagnostics = new QmlSyntaxDiagnosticsProvider();
+    syntaxDiagnostics.activate(context);
 
     registerIndexerDebugCommands(context);
     registerAstDebugCommands(context);
