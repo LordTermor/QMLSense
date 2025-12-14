@@ -4,14 +4,12 @@ RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    curl \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://bun.sh/install | bash && \
-    cp /root/.bun/bin/bun /usr/local/bin/bun && \
-    chmod +x /usr/local/bin/bun && \
-    ln -s /usr/local/bin/bun /usr/local/bin/bunx
+# Create cache directory for node-gyp with proper permissions
+RUN mkdir -p /tmp/.cache/node-gyp && chmod -R 777 /tmp/.cache
+
+ENV npm_config_cache=/tmp/.cache
 
 WORKDIR /app
 

@@ -20,15 +20,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Bun (for WASM build on host)
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: '22'
+          cache: 'npm'
 
       - name: Build WASM
         run: |
-          bun --bun install
-          bun --bun run build:wasm
+          npm install
+          npm run build:wasm
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -43,13 +44,15 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build extension in Docker
+        env:
+          HOME: /tmp
         run: |
-          docker run --rm -v "$PWD":/app -w /app vscode-qml-builder:latest bash -c '
+          docker run --rm -v "$PWD":/app -w /app -e HOME=/tmp vscode-qml-builder:latest bash -c '
             set -euo pipefail
-            bun --bun install
-            cd node_modules/@vscode/sqlite3 && bunx --bun node-gyp rebuild && cd /app
-            bun --bun run compile
-            bunx --bun @vscode/vsce package --pre-release --allow-missing-repository
+            npm install
+            cd node_modules/@vscode/sqlite3 && npx node-gyp rebuild && cd /app
+            npm run compile
+            npx @vscode/vsce package --pre-release --allow-missing-repository
           '
 
       - name: Create GitHub Release
@@ -63,4 +66,4 @@ jobs:
 
       # - name: Publish to VS Code Marketplace
       #   if: ${{ !contains(github.ref, '-') }}
-      #   run: bunx --bun ovsx publish -p ${{ secrets.OVSX_PAT }}
+      #   run: npx ovsx publish -p ${{ secrets.OVSX_PAT }}

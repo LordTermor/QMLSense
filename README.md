@@ -43,17 +43,17 @@ Use a .vsix file from GitHub release. VSCode Marketplace is coming soon.
 
 Any help (bug reporting or PRs) is very welcome!
 
-To build an extension, use `build.sh` script. You'll need Docker, [bun](https://bun.com/) or other nodejs package manager - for the later you'll have to update the script.
+To build an extension, use `build.sh` script. You'll need Docker and npm (or other Node.js package manager).
 ```sh
-$ ./build.py
+$ ./build.sh
 ```
 
 This measure is needed to ensure sqlite uses supported glibc version.
 
-To have project set up just use
+To have project set up for local development:
 ```sh
-$ bun --bun install
-$ bun --bun run compile
+$ npm install
+$ npm run compile
 ```
 
 You can use `F5` in Visual Studio Code to debug the extension.
