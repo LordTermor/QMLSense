@@ -241,6 +241,7 @@ export const functionCallRule: ClassificationRule = (ctx) => {
 
 /**
  * Rule: Object part of member_expression (e.g., root in root.width).
+ * Note: Skips JavaScript builtins to let imperative rules handle them.
  */
 export const memberExpressionObjectRule: ClassificationRule = (ctx) => {
     const { node, parent, nodeText, importTracker } = ctx;
@@ -258,6 +259,23 @@ export const memberExpressionObjectRule: ClassificationRule = (ctx) => {
             tokenType: TokenType.Namespace, 
             modifiers: TokenModifier.DefaultLibrary | TokenModifier.Static 
         };
+    }
+    
+    // Skip JavaScript built-in globals - let imperative rules handle them
+    // This includes: console, Math, JSON, Qt (as namespace), etc.
+    const imperativeAncestor = ast.findAncestorOfType(node, [
+        'statement_block',
+        'expression_statement',
+        'call_expression',
+        'binary_expression',
+        'ternary_expression',
+        'update_expression',
+        'unary_expression'
+    ]);
+    
+    if (imperativeAncestor) {
+        // Let imperative rules handle this
+        return null;
     }
 
     return { tokenType: TokenType.Variable, modifiers: 0 };
@@ -388,10 +406,10 @@ export const defaultVariableRule: ClassificationRule = (ctx) => {
 // ============================================================================
 
 /**
- * All identifier classification rules in priority order.
- * First matching rule wins.
+ * QML-specific identifier classification rules in priority order.
+ * These handle declarative QML syntax (imports, types, properties, bindings).
  */
-export const identifierRules: ClassificationRule[] = [
+export const qmlRules: ClassificationRule[] = [
     keywordRule,
     declaredIdReferenceRule,
     importAliasDeclarationRule,
@@ -411,6 +429,15 @@ export const identifierRules: ClassificationRule[] = [
     inlineComponentRule,
     signalParameterRule,
     functionParameterRule,
-    objectLiteralKeyRule,
-    defaultVariableRule
+    objectLiteralKeyRule
+];
+
+/**
+ * All identifier classification rules in priority order.
+ * First matching rule wins.
+ * Note: Imperative rules are added by tokenClassifier.ts
+ */
+export const identifierRules: ClassificationRule[] = [
+    ...qmlRules,
+    defaultVariableRule  // Fallback last
 ];
