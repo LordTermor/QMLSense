@@ -18,18 +18,6 @@ export async function isCacheValid(filePath: string, cachedTimestamp: number): P
 }
 
 /**
- * Get current file modification time.
- */
-export async function getFileModTime(filePath: string): Promise<number> {
-    try {
-        const stat = await vscode.workspace.fs.stat(vscode.Uri.file(filePath));
-        return stat.mtime;
-    } catch {
-        return 0;
-    }
-}
-
-/**
  * Check if cached data is valid for a URI.
  */
 export async function isCacheValidForUri(uri: vscode.Uri, cachedTimestamp: number): Promise<boolean> {
