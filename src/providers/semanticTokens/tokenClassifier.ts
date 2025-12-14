@@ -2,7 +2,8 @@ import type { SyntaxNode, Tree } from '../../parser/qmlParser';
 import { ImportTracker } from './importTracker';
 import { qmlKeywords } from './builtinTypes';
 import * as ast from '../../symbols/ast';
-import { identifierRules, type ClassificationContext } from './classificationRules';
+import { qmlRules, defaultVariableRule, type ClassificationContext } from './classificationRules';
+import { imperativeRules } from './imperativeClassificationRules';
 
 /**
  * Token type indices matching the legend.
@@ -47,7 +48,7 @@ export interface TokenClassification {
  */
 export class TokenClassifier {
     // Set this to a symbol name to enable debug logging for that symbol
-    private static DEBUG_SYMBOL: string | null = 'internal';
+    private static DEBUG_SYMBOL: string | null = null;
     
     // Track declared ID names in the current document
     private declaredIds = new Set<string>();
@@ -111,14 +112,24 @@ export class TokenClassifier {
             debug
         };
 
-        for (const rule of identifierRules) {
+        // Try QML rules first (highest priority)
+        for (const rule of qmlRules) {
             const result = rule(context);
             if (result !== null) {
                 return result;
             }
         }
-
-        return { tokenType: TokenType.Variable, modifiers: 0 };
+        
+        // Try imperative (JavaScript) rules
+        for (const rule of imperativeRules) {
+            const result = rule(context);
+            if (result !== null) {
+                return result;
+            }
+        }
+        
+        // Default fallback
+        return defaultVariableRule(context);
     }
 
     /**
