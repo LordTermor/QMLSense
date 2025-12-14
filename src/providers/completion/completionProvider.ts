@@ -28,6 +28,10 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
         let node = tree.rootNode.descendantForIndex(offset);
         if (!node) return undefined;
 
+        if (this.isInErrorContext(node)) {
+            return undefined;
+        }
+
         const completions: vscode.CompletionItem[] = [];
 
         if (this.isInImportContext(node)) {
@@ -54,12 +58,45 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
             completions.push(...this.getIdCompletions(tree.rootNode));
         }
 
-        if (completions.length === 0) {
-            completions.push(...this.getPropertyCompletions(node, tree.rootNode));
-            completions.push(...await this.getTypeCompletions(document));
-        }
-
         return completions;
+    }
+
+    /**
+     * Check if cursor is in an error context (broken syntax).
+     * We should not provide completions in these cases.
+     */
+    private isInErrorContext(node: SyntaxNode): boolean {
+        // Check if current node or any parent is an ERROR node
+        let current: SyntaxNode | null = node;
+        
+        while (current) {
+            if (current.type === 'ERROR') {
+                return true;
+            }
+            current = current.parent;
+        }
+        
+        // This catches cases where we're typing after broken syntax
+        if (node.parent) {
+            for (let i = 0; i < node.parent.childCount; i++) {
+                const sibling = node.parent.child(i);
+                if (sibling && sibling.type === 'ERROR') {
+                    // There's broken syntax in this scope
+                    return true;
+                }
+            }
+        }
+        
+        // This catches cases where the containing object has parse errors
+        let parent = node.parent;
+        while (parent && parent.type !== 'program') {
+            if (parent.hasError) {
+                return true;
+            }
+            parent = parent.parent;
+        }
+        
+        return false;
     }
 
     /**
@@ -86,8 +123,17 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
             }
         }
         
-        if (ast.isNodeType(node, 'ui_object_initializer', '{', '}')) {
+        // Only suggest types when we're at the start of a new object definition
+        // i.e., right after opening brace or after another complete object
+        if (ast.isNodeType(node, 'ui_object_initializer')) {
             return true;
+        }
+        
+        if (node.type === '{' || node.type === '}') {
+            const parent = node.parent;
+            if (parent?.type === 'ui_object_initializer') {
+                return true;
+            }
         }
         
         return false;
@@ -97,10 +143,22 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
      * Check if cursor is in property/binding context (inside QML object).
      */
     private isInPropertyContext(node: SyntaxNode): boolean {
+        // Only suggest properties when we're actually inside an object's body
         if (node.type === 'ui_object_initializer') {
             return true;
         }
-        return ast.hasAncestorChain(node, ['ui_object_initializer']);
+        
+        if (ast.hasAncestorChain(node, ['ui_object_initializer'])) {
+            if (ast.isNodeType(node, 'type_identifier', 'identifier')) {
+                const parent = node.parent;
+                if (parent?.type === 'ui_object_definition') {
+                    return false; // This is a type name, not a property
+                }
+            }
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -109,14 +167,22 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
     private isInExpressionContext(node: SyntaxNode): boolean {
         if (ast.isNodeType(node, 'identifier', 'property_identifier')) {
             const parent = node.parent;
+            
             if (parent?.type === 'ui_binding') {
                 const name = ast.getField(parent, 'name');
                 if (name && ast.nodesEqual(name, node)) {
                     return false;
                 }
+                return true;
             }
-            return true;
+            
+            if (parent?.type === 'member_expression' || 
+                parent?.type === 'call_expression' ||
+                parent?.type === 'binary_expression') {
+                return true;
+            }
         }
+        
         return false;
     }
 
