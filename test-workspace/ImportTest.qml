@@ -46,6 +46,10 @@ Rectangle {
         // Try: Right-click on "QQC" -> Find All References (should show import + 3 usages)
         QQC.Button {
             text: "Another QQC button"
+
+            onClicked: {
+                console.log("do something")
+            }
         }
     }
 }
