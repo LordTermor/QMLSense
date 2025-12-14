@@ -62,6 +62,9 @@
           "include": "source.js#support"
         },
         {
+          "include": "#operators"
+        },
+        {
           "include": "source.js#operators"
         },
         {
@@ -368,6 +371,46 @@
               "include": "source.js#comments"
             }
           ]
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "match": "\\?|:",
+          "name": "keyword.operator.ternary.qml"
+        },
+        {
+          "match": "===|!==|==|!=",
+          "name": "keyword.operator.comparison.qml"
+        },
+        {
+          "match": "<=|>=|<|>",
+          "name": "keyword.operator.relational.qml"
+        },
+        {
+          "match": "\\+\\+|--|\\*\\*",
+          "name": "keyword.operator.increment-decrement.qml"
+        },
+        {
+          "match": "&&|\\|\\||!",
+          "name": "keyword.operator.logical.qml"
+        },
+        {
+          "match": "\\+=|-=|\\*=|/=|%=|\\|=|&=|\\^=|<<=|>>=|>>>=",
+          "name": "keyword.operator.assignment.compound.qml"
+        },
+        {
+          "match": "=",
+          "name": "keyword.operator.assignment.qml"
+        },
+        {
+          "match": "\\+|-|\\*|/|%",
+          "name": "keyword.operator.arithmetic.qml"
+        },
+        {
+          "match": "&|\\||\\^|~|<<|>>|>>>",
+          "name": "keyword.operator.bitwise.qml"
         }
       ]
     }
