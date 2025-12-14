@@ -2,7 +2,7 @@
   "name": "qmlsense",
   "displayName": "QMLSense",
   "description": "QML language support with tree-sitter",
-  "version": "0.2.1-dev",
+  "version": "0.2.0-dev.202512141744",
   "author": "Artem Grinev",
   "publisher": "agrinev",
   "icon": "images/icon.png",
@@ -203,7 +203,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run version:dev && npm run compile",
+    "vscode:prepublish": "node scripts/version-dev.js && tsc -p ./ && npm run postcompile",
     "compile": "tsc -p ./ && npm run postcompile",
     "postcompile": "npm run copy:data && npm run copy:libs && npm run copy:wasm",
     "copy:data": "mkdir -p out/indexer/data && cp src/indexer/data/qt-builtins.json out/indexer/data/",
@@ -217,12 +217,13 @@
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.63.0",
+    "@vscode/vsce": "^3.7.1",
     "tree-sitter-cli": "^0.20.8",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "@vscode/sqlite3": "^5.1.9-vscode",
-    "web-tree-sitter": "^0.20.8",
-    "tree-sitter-qmljs": "^0.3.0"
+    "tree-sitter-qmljs": "^0.3.0",
+    "web-tree-sitter": "^0.20.8"
   }
 }
