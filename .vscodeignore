@@ -8,5 +8,7 @@ src/
 tsconfig.json
 package-lock.json
 test-workspace
-build.py
+build.sh
 .github
+Dockerfile
+scripts/
