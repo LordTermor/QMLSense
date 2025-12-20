@@ -81,9 +81,8 @@ export class ModuleIndexer {
                 }
             }
 
-            if (!moduleName) {
-                moduleName = path.basename(moduleDir);
-            }
+            moduleName = await this.inferModuleName(moduleDir);
+
 
             if (components.size > 0) {
                 const module: Module = {
@@ -184,6 +183,26 @@ export class ModuleIndexer {
         if (parts.length < reqParts.length) return false;
         
         return parts.slice(-reqParts.length).join('.') === requested;
+    }
+
+    private async inferModuleName(moduleDir: string): Promise<string> {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            return path.basename(moduleDir);
+        }
+
+        const workspaceRoot = workspaceFolders.find(folder => 
+            moduleDir.startsWith(folder.uri.fsPath)
+        )?.uri.fsPath;
+
+        if (!workspaceRoot) {
+            return path.basename(moduleDir);
+        }
+
+        const relativePath = path.relative(workspaceRoot, moduleDir);
+        const parts = relativePath.split(path.sep).filter(p => p && p !== '.');
+        
+        return parts.join('.');
     }
 
     // Qt builtins
