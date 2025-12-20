@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getParser } from '../../parser/qmlParser';
 import type { SyntaxNode } from '../../parser/qmlParser';
 import * as ast from '../../symbols/ast';
-import { getIndexer } from '../../indexer/indexerService';
+import { getIndexer } from '../../indexer/IndexerService';
 import { SymbolResolver } from '../../services/SymbolResolver';
 import { QmlSymbolKind } from '../../models/SymbolInfo';
 
@@ -50,14 +50,14 @@ class HoverRules {
         if (!typeName) return undefined;
 
         const indexer = getIndexer();
-        const modules = indexer.getModuleIndexer().getAllModules();
+        const modules = indexer.getModuleIndexer()?.getAllModules() ?? [];
 
         for (const module of modules) {
             const component = module.components.get(typeName);
             if (component) {
                 const markdown = new vscode.MarkdownString();
                 markdown.appendCodeblock(`${typeName}`, 'qml');
-                markdown.appendMarkdown(`\n**Module**: ${module.moduleName}\n\n`);
+                markdown.appendMarkdown(`\n**Module**: ${module.name}\n\n`);
                 
                 if (component.isSingleton) {
                     markdown.appendMarkdown('*Singleton type*\n\n');
@@ -193,7 +193,7 @@ class HoverRules {
         }
 
         const indexer = getIndexer();
-        const module = indexer.getModuleIndexer().resolveModule(importInfo.source, importInfo.version);
+        const module = indexer.getModuleIndexer()?.resolveModule(importInfo.source, importInfo.version);
         
         if (module) {
             markdown.appendMarkdown(`\n---\n\n**Available components** (${module.components.size}):\n\n`);

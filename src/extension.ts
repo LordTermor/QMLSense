@@ -11,9 +11,7 @@ import { QmlHoverProvider } from './providers/hover/hoverProvider';
 import { QmldirDefinitionProvider } from './providers/qmldir/qmldirDefinitionProvider';
 import { QmldirReferencesProvider } from './providers/qmldir/qmldirReferencesProvider';
 import { QmlSyntaxDiagnosticsProvider } from './providers/diagnostics/syntaxDiagnosticsProvider';
-import { getIndexer, IndexerService } from './indexer/indexerService';
-import { ModuleComponent } from './indexer/moduleTypes';
-import { registerIndexerDebugCommands } from './indexer/debugCommands';
+import { getIndexer, IndexerService } from './indexer/IndexerService';
 import { registerAstDebugCommands } from './symbols/ast/debugCommands';
 import { registerSelectionDebugCommands } from './providers/selection/debugCommands';
 import { registerSemanticTokensDebugCommands } from './providers/semanticTokens/debugCommands';
@@ -105,7 +103,7 @@ export function deactivate() {
 }
 
 function indexWorkspaceInBackground() {
-    indexer.indexWorkspace().catch(err => {
+    indexer.indexWorkspace().catch((err: any) => {
         console.error('[QML Extension] Failed to index workspace:', err);
         vscode.window.showErrorMessage(`QML indexing failed: ${err.message}`);
     });

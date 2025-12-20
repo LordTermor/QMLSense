@@ -1,8 +1,9 @@
 import type { SyntaxNode, Tree } from '../../parser/qmlParser';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { SymbolResolver } from '../../services/SymbolResolver';
 import * as ast from '../../symbols/ast';
-import { getIndexer } from '../../indexer/indexerService';
+import { getIndexer } from '../../indexer/IndexerService';
 
 export type DefinitionRule = (
     symbolName: string,
@@ -106,6 +107,8 @@ export class DefinitionRules {
 
         const indexer = getIndexer();
         const moduleIndexer = indexer.getModuleIndexer();
+        if (!moduleIndexer) return null;
+        
         const module = moduleIndexer.resolveModule(moduleName);
         
         if (module?.qmldirPath) {
@@ -264,7 +267,7 @@ export class DefinitionRules {
 
         const indexer = getIndexer();
         const moduleIndexer = indexer.getModuleIndexer();
-        const fileEntry = await indexer.getFileIndex(document.uri);
+        const fileEntry = indexer.getFile(document.uri);
         
         if (!fileEntry) {
             console.log('[resolveImportedComponent] File not indexed');
@@ -280,8 +283,8 @@ export class DefinitionRules {
             
             console.log('[resolveImportedComponent] Qualified name - qualifier:', qualifier, 'component:', componentName);
             
-            const aliasedImport = fileEntry.imports.find(imp => 
-                imp.type === 'module' && imp.qualifier === qualifier
+            const aliasedImport = fileEntry.imports.find((imp: any) => 
+                imp.type === 'module' && imp.alias === qualifier
             );
             
             if (aliasedImport) {
@@ -293,28 +296,15 @@ export class DefinitionRules {
             }
         }
 
-        if (!targetModule) {
-            const currentModule = await moduleIndexer.findModuleForFile(document.uri.fsPath);
-            if (currentModule) {
-                console.log('[resolveImportedComponent] Current file is in module:', currentModule.moduleName);
-                const component = currentModule.components.get(componentName);
-                if (component?.filePath) {
-                    console.log('[resolveImportedComponent] ✓ Found component in current module:', component.filePath);
-                    return new vscode.Location(
-                        vscode.Uri.file(component.filePath),
-                        new vscode.Position(0, 0)
-                    );
-                }
-            }
-        }
-
         console.log('[resolveImportedComponent] Searching imports for:', componentName);
+        if (!moduleIndexer) return null;
+        
         for (const imp of fileEntry.imports) {
             if (imp.type !== 'module') continue;
             
             if (targetModule && imp.source !== targetModule) continue;
             
-            if (!targetModule && imp.qualifier) continue;
+            if (!targetModule && imp.alias) continue;
             
             const component = moduleIndexer.resolveComponent(imp.source, componentName);
             if (component?.filePath) {

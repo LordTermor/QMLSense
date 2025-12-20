@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getParser } from '../../parser/qmlParser';
 import type { SyntaxNode } from '../../parser/qmlParser';
 import * as ast from '../../symbols/ast';
-import { getIndexer } from '../../indexer/indexerService';
+import { getIndexer } from '../../indexer/IndexerService';
 import { QmlSymbolKind } from '../../models/SymbolInfo';
 
 /**
@@ -295,11 +295,11 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
         const indexer = getIndexer();
         const seenComponents = new Set<string>();
 
-        const modules = indexer.getModuleIndexer().getAllModules();
+        const modules = indexer.getModuleIndexer()?.getAllModules() ?? [];
 
         for (const module of modules) {
             for (const [componentName, component] of module.components) {
-                const moduleName = module.moduleName;
+                const moduleName = module.name;
                 const item = new vscode.CompletionItem(componentName, vscode.CompletionItemKind.Class);
                 item.detail = component.isBuiltin 
                     ? `${moduleName} (Qt builtin)`
