@@ -22,13 +22,20 @@
 - TextMate grammar for `.qml` and `.qmldir` files
 - Semantic-based highlighting
 - Smart selection (Ctrl+Alt+Left/Right)
-- Go to definition (limited)
+- Go to definition
 - Find references
-- Basic autocompletion
+- Autocompletion
+- Hover information
+- VSCode problems integration (syntax errors)
 
 ### Module Index
 
-QMLSense provides an SQLite-based module index for multi-file references and definitions. It works only with qmldir modules, i.e. no CMake or C++-based components support at the moment.
+QMLSense provides an SQLite-based module index for multi-file references and definitions. It allows to navigate through:
+
+- Components from qmldir modules
+- Components from the same folder
+
+Known limitation: It works only with qmldir modules no CMake or C++-based components support at the moment.
 
 ## Installation
 
@@ -36,8 +43,8 @@ Use a .vsix file from GitHub release. VSCode Marketplace is coming soon.
 
 ## Known Issues
 
-- Cross-file navigation is limited to qmldir modules
-- Autocompletion is very basic
+- Autocompletion doesn't include property suggestions from base types
+- No CMake or C++-based component support
 
 ## Contributing
 
