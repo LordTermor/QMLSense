@@ -107,62 +107,74 @@
       {
         "command": "qml.indexer.reindexWorkspace",
         "title": "QML Indexer: Reindex Workspace",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.dumpIndex",
         "title": "QML Indexer: Dump Index to Output",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.showDependencyGraph",
         "title": "QML Indexer: Show Dependency Graph",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.showFileInfo",
         "title": "QML Indexer: Show Current File Info",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.clearCache",
         "title": "QML Indexer: Clear Index Cache",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.ast.showAtCursor",
         "title": "QML AST: Show Tree at Cursor",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.ast.showFullTree",
         "title": "QML AST: Show Full Tree",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.showModuleIndex",
         "title": "QML Indexer: Show Module Index",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.indexer.resolveComponent",
         "title": "QML Indexer: Resolve Component",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.semanticTokens.inspectAtCursor",
         "title": "QML Tokens: Inspect at Cursor",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.semanticTokens.debugClassification",
         "title": "QML Tokens: Debug Classification",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       },
       {
         "command": "qml.selection.debugExpansion",
         "title": "QML Selection: Debug Expansion",
-        "category": "QML"
+        "category": "QML",
+        "enablement": "isInDevelopmentMode"
       }
     ],
     "configuration": {

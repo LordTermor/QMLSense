@@ -87,10 +87,13 @@ export async function activate(context: vscode.ExtensionContext) {
     const syntaxDiagnostics = new QmlSyntaxDiagnosticsProvider();
     syntaxDiagnostics.activate(context);
 
-    registerIndexerDebugCommands(context);
-    registerAstDebugCommands(context);
-    registerSelectionDebugCommands(context);
-    registerSemanticTokensDebugCommands(context);
+    const isDevelopment = context.extensionMode === vscode.ExtensionMode.Development;
+    if (isDevelopment) {
+        registerAstDebugCommands(context);
+        registerSelectionDebugCommands(context);
+        registerSemanticTokensDebugCommands(context);
+        console.log('QML debug commands registered (development mode)');
+    }
 
     console.log('QML extension activated');
 }
