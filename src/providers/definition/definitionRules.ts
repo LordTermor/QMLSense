@@ -19,6 +19,7 @@ export class DefinitionRules {
             this.resolveImportAlias.bind(this),
             this.resolveImportModule.bind(this),
             this.resolveParentKeyword.bind(this),
+            this.resolveLocalComponent.bind(this),
             this.resolveImportedComponent.bind(this),
             this.resolveFromDeclaration.bind(this)
         ];
@@ -140,6 +141,78 @@ export class DefinitionRules {
             document.uri,
             ast.nodeToRange(typeNameNode, document)
         );
+    }
+
+    private async resolveLocalComponent(
+        symbolName: string,
+        node: SyntaxNode,
+        root: SyntaxNode,
+        document: vscode.TextDocument
+    ): Promise<vscode.Location | null> {
+        console.log('[resolveLocalComponent]', {
+            symbolName,
+            nodeType: node.type,
+            parentType: node.parent?.type,
+            nodeText: node.text
+        });
+        
+        let typeNameNode: SyntaxNode | null = null;
+        
+        if (ast.hasAncestorChain(node, ['nested_identifier', 'ui_object_definition'])) {
+            const objDef = node.parent!.parent!;
+            const firstChild = objDef.namedChildren[0];
+            
+            if (firstChild?.type === 'nested_identifier') {
+                typeNameNode = node.parent!;
+            }
+        }
+        else if (ast.hasAncestorChain(node, ['ui_object_definition'])) {
+            const typeNameField = node.parent!.childForFieldName('type_name');
+            if (ast.nodesEqual(node, typeNameField)) {
+                typeNameNode = node;
+            }
+        }
+        
+        if (!typeNameNode) {
+            console.log('[resolveLocalComponent] Not a type_name');
+            return null;
+        }
+
+        const fullTypeName = typeNameNode.text;
+        const parsed = ast.qml.parseQualifiedTypeName(fullTypeName);
+        
+        if (parsed.qualifier) {
+            console.log('[resolveLocalComponent] Qualified name - skipping (handled by resolveImportedComponent)');
+            return null;
+        }
+
+        const componentName = parsed.component;
+        console.log('[resolveLocalComponent] Looking for local component:', componentName);
+
+        const indexer = getIndexer();
+        const moduleIndexer = indexer.getModuleIndexer();
+        if (!moduleIndexer) return null;
+        
+        const currentDir = path.dirname(document.uri.fsPath);
+
+        // Simplified - just check local directory, no per-file module tracking
+
+        const localFilePath = path.join(currentDir, `${componentName}.qml`);
+        console.log('[resolveLocalComponent] Checking for local file:', localFilePath);
+        
+        try {
+            await vscode.workspace.fs.stat(vscode.Uri.file(localFilePath));
+            console.log('[resolveLocalComponent] ✓ Found local component file:', localFilePath);
+            return new vscode.Location(
+                vscode.Uri.file(localFilePath),
+                new vscode.Position(0, 0)
+            );
+        } catch (error) {
+            console.log('[resolveLocalComponent] Local component file not found');
+        }
+
+        console.log('[resolveLocalComponent] Component not found locally');
+        return null;
     }
 
     private async resolveImportedComponent(

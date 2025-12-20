@@ -293,6 +293,7 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
     private async getTypeCompletions(document: vscode.TextDocument): Promise<vscode.CompletionItem[]> {
         const completions: vscode.CompletionItem[] = [];
         const indexer = getIndexer();
+        const seenComponents = new Set<string>();
 
         const modules = indexer.getModuleIndexer().getAllModules();
 
@@ -316,10 +317,54 @@ export class QmlCompletionProvider implements vscode.CompletionItemProvider {
 
                 item.sortText = component.isBuiltin ? `0_${componentName}` : `1_${componentName}`;
                 completions.push(item);
+                seenComponents.add(componentName);
             }
         }
 
+        await this.addLocalComponentCompletions(document, completions, seenComponents);
+
         return completions;
+    }
+
+    /**
+     * Add completions for local .qml files in same directory (implicitly available).
+     */
+    private async addLocalComponentCompletions(
+        document: vscode.TextDocument,
+        completions: vscode.CompletionItem[],
+        seenComponents: Set<string>
+    ): Promise<void> {
+        const currentDir = vscode.Uri.joinPath(document.uri, '..');
+        
+        try {
+            const files = await vscode.workspace.fs.readDirectory(currentDir);
+            
+            for (const [filename, fileType] of files) {
+                if (fileType === vscode.FileType.File && filename.endsWith('.qml')) {
+                    const componentName = filename.slice(0, -4);
+                    
+                    if (componentName === vscode.workspace.asRelativePath(document.uri).split('/').pop()?.slice(0, -4)) {
+                        continue;
+                    }
+                    
+                    if (!seenComponents.has(componentName)) {
+                        const item = new vscode.CompletionItem(componentName, vscode.CompletionItemKind.Class);
+                        item.detail = 'Local component (same directory)';
+                        
+                        if (this.hasCommonProperties(componentName)) {
+                            item.insertText = new vscode.SnippetString(`${componentName} {\n\t$0\n}`);
+                        } else {
+                            item.insertText = componentName;
+                        }
+                        
+                        item.sortText = `2_${componentName}`;
+                        completions.push(item);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('[QML Completion] Failed to read local directory:', error);
+        }
     }
 
     /**
