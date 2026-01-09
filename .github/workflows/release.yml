@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,12 +49,19 @@ jobs:
         env:
           HOME: /tmp
         run: |
-          docker run --rm -v "$PWD":/app -w /app -e HOME=/tmp vscode-qml-builder:latest bash -c '
+          docker run --rm -v "$PWD":/app -w /app -e HOME=/tmp -e GITHUB_REF_NAME="$GITHUB_REF_NAME" vscode-qml-builder:latest bash -c '
             set -euo pipefail
+            
+            # Fix Git ownership for Docker
+            git config --global --add safe.directory /app
+            
             npm install
             cd node_modules/@vscode/sqlite3 && npx node-gyp rebuild && cd /app
-            npm run compile
-            npx @vscode/vsce package --pre-release --allow-missing-repository
+            npm run compile:release
+            
+            # Build package (use 4th version number for pre-releases: v0.3.4.1)
+            echo "Building release package"
+            npx @vscode/vsce package --allow-missing-repository
           '
 
       - name: Create GitHub Release
@@ -61,9 +70,12 @@ jobs:
           files: '*.vsix'
           generate_release_notes: true
           draft: false
-          prerelease: ${{ contains(github.ref, '-') }}
-          make_latest: ${{ !contains(github.ref, '-') }}
+          prerelease: false
+          make_latest: true
 
-      # - name: Publish to VS Code Marketplace
-      #   if: ${{ !contains(github.ref, '-') }}
-      #   run: npx ovsx publish -p ${{ secrets.OVSX_PAT }}
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          echo "Publishing release to marketplace"
+          npx @vscode/vsce publish --packagePath *.vsix
