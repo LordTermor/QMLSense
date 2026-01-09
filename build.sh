@@ -26,6 +26,10 @@ docker run --rm \
   -e BUILD_TYPE="$BUILD_TYPE" \
   vscode-qml-builder bash -c '
   set -euo pipefail
+  
+  # Fix Git ownership for Docker
+  git config --global --add safe.directory /app
+  
   echo "==============================="
   echo "Building inside Docker container"
   echo "==============================="
