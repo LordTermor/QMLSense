@@ -2,7 +2,8 @@
 
 /**
 Generates dev version from git tags for extension builds.
-Format: baseVersion-dev.commitCount.hash (e.g., 0.2.0-dev.5.a1b2c3d)
+Format: x.y.z-dev.n (e.g., 0.3.4-dev.5 = 5 commits after v0.3.4 tag)
+Valid semver pre-release format for local builds and vsce packaging.
 */
 
 const fs = require('fs');
@@ -13,29 +14,23 @@ const pkgPath = path.join(__dirname, '..', 'package.json');
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
 try {
-  const gitDescribe = execSync('git describe --tags --always --dirty', { encoding: 'utf8' }).trim();
+  const gitDescribe = execSync('git describe --tags --long --always', { encoding: 'utf8' }).trim();
   
-  if (gitDescribe.includes('-')) {
-    const match = gitDescribe.match(/^v?(.+?)-(\d+)-g([a-f0-9]+)(-dirty)?$/);
-    if (match) {
-      const [, baseVersion, commitCount, shortHash, dirty] = match;
-      pkg.version = `${baseVersion}-dev.${commitCount}.${shortHash}${dirty || ''}`;
+  const match = gitDescribe.match(/^v?([0-9.]+)-(\d+)-g[a-f0-9]+$/);
+  if (match) {
+    const [, baseVersion, commitCount] = match;
+    if (commitCount === '0') {
+      pkg.version = baseVersion;
     } else {
-      pkg.version = `${gitDescribe.replace(/^v/, '')}-dev.${Date.now()}`;
+      pkg.version = `${baseVersion}-dev.${commitCount}`;
     }
   } else {
-    pkg.version = gitDescribe.replace(/^v/, '').replace(/-dirty$/, '-dev');
+    const timestamp = Math.floor(Date.now() / 1000);
+    pkg.version = `0.0.0-dev.${timestamp}`;
   }
 } catch (error) {
-  const now = new Date();
-  const timestamp = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0'),
-    String(now.getHours()).padStart(2, '0'),
-    String(now.getMinutes()).padStart(2, '0')
-  ].join('');
-  pkg.version = `0.2.0-dev.${timestamp}`;
+  const timestamp = Math.floor(Date.now() / 1000);
+  pkg.version = `0.0.0-dev.${timestamp}`;
 }
 
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
