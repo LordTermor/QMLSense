@@ -18,12 +18,17 @@ echo "Building Docker image..."
 docker build -t vscode-qml-builder .
 
 echo "Running build inside Docker container..."
+
+# Get current git ref for versioning
+GIT_REF=$(git describe --tags --exact-match 2>/dev/null || echo "")
+
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$(pwd)":/app \
   -w /app \
   -e HOME=/tmp \
   -e BUILD_TYPE="$BUILD_TYPE" \
+  -e GITHUB_REF_NAME="$GIT_REF" \
   vscode-qml-builder bash -c '
   set -euo pipefail
   
@@ -40,7 +45,14 @@ docker run --rm \
   npm rebuild --build-from-source @vscode/sqlite3
   echo "Packaging VSCode extension..."
   if [[ "$BUILD_TYPE" == "release" ]]; then
-    npx @vscode/vsce package --allow-missing-repository
+    # Check if this is a pre-release tag
+    if [[ "${GITHUB_REF_NAME:-}" =~ -pre|-beta|-rc|-alpha ]]; then
+      echo "Building pre-release package"
+      npx @vscode/vsce package --pre-release --allow-missing-repository
+    else
+      echo "Building stable release package"
+      npx @vscode/vsce package --allow-missing-repository
+    fi
   else
     npx @vscode/vsce package --pre-release --allow-missing-repository
   fi

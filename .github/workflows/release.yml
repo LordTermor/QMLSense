@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,7 +49,7 @@ jobs:
         env:
           HOME: /tmp
         run: |
-          docker run --rm -v "$PWD":/app -w /app -e HOME=/tmp vscode-qml-builder:latest bash -c '
+          docker run --rm -v "$PWD":/app -w /app -e HOME=/tmp -e GITHUB_REF_NAME="$GITHUB_REF_NAME" vscode-qml-builder:latest bash -c '
             set -euo pipefail
             
             # Fix Git ownership for Docker
@@ -58,7 +60,7 @@ jobs:
             npm run compile:release
             
             # Check if this is a pre-release tag (contains hyphen after version)
-            if [[ "$GITHUB_REF_NAME" =~ -pre|-beta|-rc|-alpha ]]; then
+            if [[ "${GITHUB_REF_NAME:-}" =~ -pre|-beta|-rc|-alpha ]]; then
               echo "Building pre-release package"
               npx @vscode/vsce package --pre-release --allow-missing-repository
             else
