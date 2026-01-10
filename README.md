@@ -39,7 +39,7 @@ Known limitation: It works only with qmldir modules no CMake or C++-based compon
 
 ## Installation
 
-Use a .vsix file from GitHub release. VSCode Marketplace is coming soon.
+You can install QMLSense from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=agrinev.qmlsense) or use a .vsix file from GitHub releases
 
 ## Known Issues
 
